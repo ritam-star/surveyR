@@ -1,0 +1,25 @@
+---
+title: "R Notebook for Survey Book"
+output: html_notebook
+---
+
+
+<b> Installing Libraries </b>
+```{r}
+install.packages(c("survey", "srvyr"))
+```
+
+<b> Installing More Libraries </b>
+```{r}
+ install.packages("pak")
+ pak::pak("tidy-survey-r/srvyrexploR")
+```
+
+<b> Loading Libraries </b>
+```{r}
+ library(tidyverse)
+ library(survey)
+ library(srvyr)
+ library(srvyrexploR)
+```
+
