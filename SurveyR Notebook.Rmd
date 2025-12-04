@@ -15,11 +15,65 @@ install.packages(c("survey", "srvyr"))
  pak::pak("tidy-survey-r/srvyrexploR")
 ```
 
-<b> Loading Libraries </b>
+<b> Loading Libraries </b> needs to be reloaded every session
 ```{r}
  library(tidyverse)
  library(survey)
  library(srvyr)
  library(srvyrexploR)
+```
+
+Installing more Libraries
+```{r}
+install.packages(c("gt", "gtsummary"))
+```
+
+Loading Libraries
+```{r}
+library(broom)
+library(gt)
+library(gtsummary)
+```
+
+Installing Census API
+```{r}
+install.packages("censusapi")
+```
+Loading Census API
+```{r}
+library(censusapi)
+```
+*Storing API key at Sys.setenv(CENSUS_KEY = "key")*
+Having a Glimpse ANES 2020 (of the modified survey data in srvyrexploR)
+```{r}
+anes_2020 %>%
+  select(-matches("^V\\d")) %>%
+  glimpse()
+```
+Having a Glimpse RECS 2020 (of the modified survey data in srvyrexploR)
+```{r}
+recs_2020 %>%
+  select(-matches("^NWEIGHT")) %>%
+  glimpse()
+```
+Getting data from Current Population Survey (CPS) using the census key
+```{r}
+cps_state_in <- getCensus(
+  name = "cps/basic/mar",
+  vintage = 2020,
+  region = "state",
+  vars = c(
+    "HRMONTH", "HRYEAR4",
+    "PRTAGE", "PRCITSHP", "PWSSWGT"
+  ),
+  key = Sys.getenv("CENSUS_KEY")
+)
+
+cps_state <- cps_state_in %>%
+  as_tibble() %>%
+  mutate(across(
+    .cols = everything(),
+    .fns = as.numeric
+  ))
 ```
 
