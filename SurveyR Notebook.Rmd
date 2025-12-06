@@ -232,11 +232,63 @@ apistrat_des %>%
   )
 ```
 
+Start of Chapter 5 & resetting the variables (why??)
+```{r}
+#for ANES 2020
+targetpop <- 231592693
+
+anes_adjwgt <- anes_2020 %>%
+  mutate(Weight = Weight / sum(Weight) * targetpop)
+
+anes_des <- anes_adjwgt %>%
+  as_survey_design(
+    weights = Weight,
+    strata = Stratum,
+    ids = VarUnit,
+    nest = TRUE
+  )
+```
+```{r}
+#for RECS 2020
+recs_des <- recs_2020 %>%
+  as_survey_rep(
+    weights = NWEIGHT,
+    repweights = NWEIGHT1:NWEIGHT60,
+    type = "JK1",
+    scale = 59 / 60,
+    mse = TRUE
+  )
+```
+
+Example 1: Estimated Population Count
+```{r}
+recs_des %>%
+  survey_count()
+```
+```{r}
+recs_des %>%
+  survey_tally()
+```
+Example 2: Estimated Counts by Subgroups
+```{r}
+recs_des %>%
+  survey_count(Region, Division, name = "N")
+```
+
+Note: survey_count() syntax wont work with survey_tally()
+```{r}
+recs_des  %>%
+  survey_tally(Region, Division, name = "N")
+```
+Use a group_by() to fix this
+```{r}
+recs_des %>%
+  group_by(Region, Division) %>%
+  survey_tally(name = "N")
+```
 
 
-
-
-
+5.3 Totals and Sums
 
 
 
