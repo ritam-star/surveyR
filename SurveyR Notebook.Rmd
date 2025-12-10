@@ -289,9 +289,70 @@ recs_des %>%
 
 
 5.3 Totals and Sums
+Example 1 Estimated Population Count
+```{r}
+recs_des %>%
+  summarise(Tot = survey_total())
+```
 
+Example 2 Overall summation of continuous variables
+```{r}
+recs_des %>%
+  summarise(elec_bill = survey_total(DOLLAREL))
+```
+Example 3: Summation by Groups
+```{r}
+recs_des %>%
+  group_by(Region) %>%
+  summarise(elec_bill = survey_total(DOLLAREL,
+                                     vartype = "ci"
+                                     ))
+```
+Testing something ie testing the difference b/w upp and low (success)
+```{r}
+difference <- recs_des %>%
+  group_by(Region) %>%
+  summarise(elec_bill = survey_total(DOLLAREL,
+                                     vartype = "ci"
+                                     ))
+difference$diff <- difference$elec_bill_upp - difference$elec_bill_low
 
+print(difference)
+```
+5.4 Means and Proportions
+5.4.2 Example 1: One variable proportions
+```{r}
+recs_des %>%
+  group_by(Region) %>%
+  summarize(p = survey_prop())
+```
+Example 2: Consitional Proportions
+```{r}
+recs_des %>%
+  group_by(Region, ACUsed) %>%
+  summarise(p = survey_prop())
+```
 
+Example 3: Joint Proportions
+```{r}
+recs_des %>%
+  group_by(interact(Region, ACUsed)) %>%
+  summarise(p = survey_prop())
+```
+Example 4: Overall Mean
+```{r}
+recs_des %>%
+  summarise(elec_bill = survey_mean(DOLLAREL,
+                                    vartype = c("se", "ci")
+                                    ))
+```
+Example 5: Means by Subgroup
+```{r}
+recs_des %>%
+  group_by(Region) %>%
+  summarise(elec_bill = survey_mean(DOLLAREL))
+```
+5.5 Quantiles and Medians
 
 
 
