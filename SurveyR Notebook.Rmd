@@ -353,7 +353,48 @@ recs_des %>%
   summarise(elec_bill = survey_mean(DOLLAREL))
 ```
 5.5 Quantiles and Medians
-
+5.5.2 Example 1 Overall Quartiles
+```{r}
+recs_des %>%
+  summarise(elec_bill = survey_quantile(DOLLAREL,
+                                        quantiles = c(0.25, 0.5, 0.75)
+                                        ))
+```
+Example 2 Quartiles By Subgroup
+```{r}
+recs_des %>%
+  group_by(Region) %>%
+  summarise(elec_bill = survey_quantile(DOLLAREL,
+                                        quantiles = c(0.25, 0.5, 0.75)
+                                        ))
+```
+Example 3 Minimum and Maximum
+```{r}
+recs_des %>%
+  summarise(elec_bill = survey_quantile(DOLLAREL,
+                                        quantiles = c(0, 1)
+                                        ))
+```
+My example 3.1 Min max by region
+```{r}
+recs_des %>%
+  group_by(Region) %>%
+  summarise(elec_bill = survey_quantile(DOLLAREL,
+                                        quantiles = c(0, 1)
+                                        ))
+```
+Example 4: Overall Median
+```{r}
+recs_des %>%
+  summarise(elec_bill = survey_median(DOLLAREL))
+```
+Example 5 Medians by subgroup
+```{r}
+recs_des %>%
+  group_by(Region) %>%
+  summarise(elec_bill = survey_median(DOLLAREL))
+```
+Example 5.6 Rations
 
 
 
