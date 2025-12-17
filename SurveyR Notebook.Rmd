@@ -396,6 +396,87 @@ recs_des %>%
 ```
 Example 5.6 Rations
 
+Example 1: Overall Ratios
+```{r}
+recs_des %>%
+  summarise(
+    DOLLARLP_Tot = survey_total(DOLLARLP, vartype = NULL),
+    BTULP_Tot = survey_total(BTULP, vartype = NULL),
+    DOL_BTU_Rat = survey_ratio(DOLLARLP, BTULP),
+    DOL_BTU_AVG = survey_mean(DOLLARLP / BTULP, na.rm = TRUE)
+  )
+```
+Example 2: Ratios by subgroup
+```{r}
+recs_des %>%
+  group_by(Region) %>%
+  summarise(DOL_BTU_Rat = survey_ratio(DOLLARLP, BTULP)) %>%
+  arrange(DOL_BTU_Rat)
+```
+5.7 CORRELATIONS
+Example 1: Overall correlations
+```{r}
+recs_des %>%
+  summarise(SQFT_Elec_Corr = survey_corr(TOTSQFT_EN, BTUEL))
+```
+Example 2: Correlation by subgroup
+
+```{r}
+recs_des %>%
+  group_by(ACUsed) %>%
+  summarise(SQFT_Elec_Corr = survey_corr(TOTSQFT_EN, DOLLAREL))
+```
+5.8 STANDARD DEVIATION AND VARIANCE
+5.8.2 EXample 1: Overall Variability
+```{r}
+recs_des %>%
+  summarise(
+    var_elbill = survey_var(DOLLAREL),
+    sd_elbill = survey_sd(DOLLAREL)
+  )
+```
+
+Example 2: Variability by Subgroup
+```{r}
+recs_des %>%
+  group_by(Region) %>%
+  summarise(
+    var_elbill = survey_var(DOLLAREL),
+    sd_elbill = survey_sd(DOLLAREL)
+  )
+```
+5.9 Additional Topics
+5.9.1 Unweighted Analysis
+```{r}
+recs_des %>%
+  summarise(
+    elec_bill = survey_mean(DOLLAREL),
+    elec_unweighted = unweighted(mean(DOLLAREL))
+  )
+```
+5.9.2 Subpopulatioin Analysis
+```{r}
+recs_des %>%
+  filter(BTUNG > 0) %>%
+  summarise(NG_mean = survey_mean(DOLLARNG,
+                                  vartype = c("se", "ci")
+                                  ))
+```
+5.9.3 Design Effects
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
