@@ -463,15 +463,117 @@ recs_des %>%
                                   ))
 ```
 5.9.3 Design Effects
+```{r}
+recs_des %>%
+  summarise(across(
+    c(BTUEL, BTUNG, BTULP, BTUFO, BTUWOOD),
+    ~ survey_mean(.x, deff = TRUE, vartype = NULL)
+  )) %>%
+  select(ends_with("deff"))
+```
+5.9.4 Creating Summary Rows
+```{r}
+recs_des %>%
+  cascade(DOLLAREL_mn = survey_mean(DOLLAREL))
+```
+```{r}
+recs_des %>%
+  group_by(Region) %>%
+  cascade(DOLLAREL_mn = survey_mean(DOLLAREL))
+```
+```{r}
+recs_des %>%
+  group_by(Region) %>%
+  cascade(DOLLAREL_mn = survey_mean(DOLLAREL),
+          .fill = "National")
+  
 
+```
 
+```{r}
+recs_des %>%
+  group_by(Region) %>%
+  cascade(DOLLAREL_mn = survey_mean(DOLLAREL),
+          .fill = "National",
+          .fill_level_top = TRUE
+          )
+```
+5.9.5 Calculating Estimates for many Outcomes
+Example 1 ACROSS()
+```{r}
+consumption_ests <- recs_des %>%
+  summarise(across(
+    starts_with("BTU"),
+    list(
+      Total = ~ survey_total(.x, vartype = "cv"),
+      Mean = ~ survey_mean(.x, vartype = "cv")
+    ),
+    .unpack = "{outer}.{inner}"
+  ))
 
+consumption_ests
+```
 
+```{r}
+consumption_ests_long <- consumption_ests %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = c("FuelType", "Stat", "Type"),
+    names_pattern = "BTU(.*)_(.*)\\.(.*)"
+  )
 
+consumption_ests_long
+```
 
+```{r}
+consumption_ests_long %>%
+  mutate(Type = case_when(
+    Type == "coef" ~ "",
+    Type == "_cv" ~ " (CV)"
+  )) %>%
+  pivot_wider(
+    id_cols = FuelType,
+    names_from = c(Stat, Type),
+    names_glue = "{Stat}{Type}",
+    values_from = value
+  )
+```
 
+Example 2: Proportions with Across()
+```{r}
+recs_des %>%
+  group_by(ACUsed) %>%
+  summarise(p = survey_prop())
+```
 
+```{r}
+recs_des %>%
+  group_by(SpaceHeatingUsed) %>%
+  summarize(p = survey_prop())
+```
 
+```{r}
+cool_heat_tab <- recs_des %>%
+  summarize(across(c(ACUsed, SpaceHeatingUsed), ~ survey_mean(.x),
+    .unpack = "{outer}.{inner}"
+  ))
+
+cool_heat_tab
+```
+
+```{r}
+cool_heat_tab %>%
+  pivot_longer(everything(),
+    names_to = c("Comfort", ".value"),
+    names_pattern = "(.*)\\.(.*)"
+  ) %>%
+  rename(
+    p = coef,
+    se = `_se`
+  )
+```
+
+Example 3: PURR::MAP()
 
 
 
