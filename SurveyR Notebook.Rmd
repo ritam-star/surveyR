@@ -575,6 +575,86 @@ cool_heat_tab %>%
 
 Example 3: PURR::MAP()
 
+```{r}
+anes_des %>%
+  drop_na(TrustGovernment) %>%
+  group_by(TrustGovernment) %>%
+  summarise(p = survey_prop() * 100) %>%
+  mutate(Variable = "TrustGovernment") %>%
+  rename(Answer = TrustGovernment) %>%
+  select(Variable, everything())
+```
+creating a function
+```{r}
+calcps <- function(var) {
+  anes_des %>%
+    drop_na(!!sym(var)) %>%
+    group_by(!!sym(var)) %>%
+    summarise(p = survey_prop() * 100) %>%
+    mutate(Variable = var) %>%
+    rename(Answer := !!sym(var)) %>%
+    select(Variable, everything())
+}
+```
+testing
+```{r}
+calcps("TrustGovernment")
+
+```
+```{r}
+calcps("TrustPeople")
+
+```
+using map() to iterate over as many variables
+```{r}
+c("TrustGovernment", "TrustPeople") %>%
+  map(calcps) %>%
+  list_rbind()
+```
+5.10 Exercise
+1. How many females have a graduate degree? Hint: The variables Gender and Education will be useful.
+My solution 1 (checks out)
+```{r}
+anes_des %>%
+  filter(Gender == "Female") %>%
+  filter(Education == "Graduate") %>%
+  survey_count()
+
+```
+My Solution 2 (checks out)
+```{r}
+anes_des %>%
+  group_by(Education) %>%
+  filter(Gender == "Female") %>%
+  survey_count()
+```
+
+Textbook solution
+```{r}
+# Option 1:
+femgd_option1 <- anes_des %>%
+  filter(Gender == "Female", Education == "Graduate") %>%
+  survey_count(name = "n")
+
+femgd_option1
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
