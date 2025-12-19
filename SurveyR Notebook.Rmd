@@ -640,7 +640,17 @@ femgd_option1
 ```
 
 
+2. What percentage of people identify as “Strong Democrat”? Hint: The variable PartyID indicates someone’s party affiliation.
+My solution 1 (checks out)
+```{r}
+strongDemo <- anes_des %>%
+  group_by(PartyID) %>%
+  summarise(percentage = survey_prop() * 100) %>%
+  filter(PartyID == "Strong democrat") #added from Textbook solution
 
+
+strongDemo
+```
 
 
 
